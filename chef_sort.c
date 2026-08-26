@@ -26,10 +26,13 @@ typedef struct {
 /**
  * Estrutura para o Nível Mestre
  * Representa uma comanda com o nome do prato e número da comanda
+ * 
+ * ATENÇÃO: Nome alterado para 'nome' para manter consistência
+ * com a estrutura Prato e facilitar o entendimento
  */
 typedef struct {
-    char nome_prato[50];
-    int numero_comanda;
+    char nome[50];        // Nome do prato (consistente com Prato)
+    int numero_comanda;   // Número da comanda (prioridade)
 } Comanda;
 
 // ====================================================================
@@ -124,6 +127,9 @@ void selectionSortPratos(Prato arr[], int n) {
  * 2. Insere o último elemento na posição correta
  * 
  * Complexidade: O(n²) no pior caso, O(n) no melhor caso
+ * 
+ * O Insertion Sort é estável e ideal para listas parcialmente ordenadas,
+ * como comandas que chegam quase em sequência.
  */
 void recursiveInsertionSort(Comanda arr[], int n) {
     // Caso base: se n <= 1, já está ordenado
@@ -139,6 +145,7 @@ void recursiveInsertionSort(Comanda arr[], int n) {
     int j = n - 2;
     
     // Move os elementos maiores que o último para a direita
+    // Compara pelo número da comanda (prioridade de atendimento)
     while (j >= 0 && arr[j].numero_comanda > ultimo.numero_comanda) {
         arr[j + 1] = arr[j];
         j--;
@@ -147,7 +154,7 @@ void recursiveInsertionSort(Comanda arr[], int n) {
 }
 
 // ====================================================================
-// FUNÇÃO AUXILIAR: EXIBIR CARDÁPIO (VERSÃO CORRIGIDA)
+// FUNÇÕES AUXILIARES PARA EXIBIÇÃO
 // ====================================================================
 
 /**
@@ -165,9 +172,23 @@ void exibirCardapio(Prato pratos[], int n, char titulo[]) {
     printf("%-30s %s\n", "Nome do Prato", "Qtd. Ingredientes");
     printf("%-30s %s\n", "---", "---");
     for (int i = 0; i < n; i++) {
-        // %-30s alinha o nome à esquerda com 30 caracteres
-        // %2d alinha o número à direita com 2 caracteres
         printf("%-30s %2d\n", pratos[i].nome, pratos[i].qtd_ingredientes);
+    }
+}
+
+/**
+ * exibirComandas - Exibe as comandas com formatação alinhada
+ * 
+ * @param comandas: Array de Comandas
+ * @param n: Número de elementos
+ * @param titulo: Título a ser exibido
+ */
+void exibirComandas(Comanda comandas[], int n, char titulo[]) {
+    printf("\n%s\n", titulo);
+    printf("%-30s %s\n", "Nome do Prato", "Nº Comanda");
+    printf("%-30s %s\n", "---", "---");
+    for (int i = 0; i < n; i++) {
+        printf("%-30s #%d\n", comandas[i].nome, comandas[i].numero_comanda);
     }
 }
 
@@ -245,6 +266,13 @@ int main() {
     printf("║         NÍVEL MESTRE - Organizando as Comandas      ║\n");
     printf("╚══════════════════════════════════════════════════════╝\n");
     
+    /**
+     * VETOR DE COMANDAS FIXO E PRÉ-DEFINIDO
+     * Simula comandas que chegaram fora de ordem no restaurante
+     * 
+     * O Insertion Sort é ideal pois as comandas chegam quase em sequência,
+     * com poucas trocas necessárias (estável)
+     */
     Comanda comandas[5] = {
         {"Macarrao", 103},
         {"Salada", 101},
@@ -254,24 +282,24 @@ int main() {
     };
     int num_comandas = 5;
     
-    printf("MISSÃO: Organizar as comandas por número de ordem.\n\n");
-    printf("Comandas ANTES da ordenacao:\n");
-    printf("%-20s %s\n", "Nome do Prato", "Nº Comanda");
-    printf("%-20s %s\n", "---", "---");
-    for (int i = 0; i < num_comandas; i++) {
-        printf("%-20s #%d\n", comandas[i].nome_prato, comandas[i].numero_comanda);
-    }
+    printf("MISSÃO: Organizar as comandas por número de ordem (prioridade de atendimento).\n");
+    printf("O Insertion Sort recursivo é estável e ideal para listas parcialmente ordenadas.\n\n");
     
-    printf("\nSISTEMA: Aplicando Recursive Insertion Sort...\n");
+    // Exibe comandas antes da ordenação
+    exibirComandas(comandas, num_comandas, "COMANDAS ANTES DA ORDENAÇÃO:");
+    
+    // Aplica Insertion Sort recursivo
+    printf("\nSISTEMA: Aplicando Recursive Insertion Sort para organizar as comandas...\n");
     recursiveInsertionSort(comandas, num_comandas);
     
-    printf("\nComandas DEPOIS da ordenacao (por numero):\n");
-    printf("%-20s %s\n", "Nome do Prato", "Nº Comanda");
-    printf("%-20s %s\n", "---", "---");
-    for (int i = 0; i < num_comandas; i++) {
-        printf("%-20s #%d\n", comandas[i].nome_prato, comandas[i].numero_comanda);
-    }
+    // Exibe comandas depois da ordenação
+    exibirComandas(comandas, num_comandas, "COMANDAS DEPOIS DA ORDENAÇÃO (EM ORDEM DE PRIORIDADE):");
     
+    printf("\nRESULTADO: Comandas organizadas! O Chef pode atender os pedidos em ordem.\n");
+    
+    // ---------------------------------------------------------
+    // FINALIZAÇÃO DO SISTEMA
+    // ---------------------------------------------------------
     printf("\n╔══════════════════════════════════════════════════════╗\n");
     printf("║              SISTEMA FINALIZADO COM SUCESSO         ║\n");
     printf("╚══════════════════════════════════════════════════════╝\n");
